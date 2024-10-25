@@ -22,8 +22,8 @@ void main() async {
   await dotenv.load(fileName: ".env");
 
   await Supabase.initialize(
-    url: 'https://xijqwdekbbynjsaiyvqd.supabase.co',
-    anonKey: dotenv.env['SUPABASE_ANONKEY']!,
+    url: dotenv.env['SUPABASE_URL']!,
+    anonKey: dotenv.env['SUPABASE_ANON_KEY']!,
   );
 
   // Set color of status bar to scaffold bg
