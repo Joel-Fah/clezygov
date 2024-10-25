@@ -1,11 +1,6 @@
-import 'dart:ui';
-
 import 'package:clezigov/views/widgets/buttons/primary_button.dart';
-import 'package:clezigov/views/widgets/tilt_icon.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
-import 'package:lucide_icons/lucide_icons.dart';
 import 'package:top_snackbar_flutter/custom_snack_bar.dart';
 import 'package:top_snackbar_flutter/top_snack_bar.dart';
 
@@ -16,7 +11,7 @@ void showNotificationSnackBar(
     {required BuildContext context,
     required String message,
     Color? backgroundColor = seedColor,
-    IconData? icon = LucideIcons.badgeInfo,
+    IconData? icon = infoIcon,
     Function()? onTap}) {
   return showTopSnackBar(
     Overlay.of(context),

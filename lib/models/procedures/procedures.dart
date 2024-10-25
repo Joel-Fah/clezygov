@@ -1,4 +1,4 @@
-import 'package:clezigov/models/procedures/available.dart';
+import 'package:clezigov/models/procedures/availability.dart';
 import 'package:clezigov/models/procedures/category.dart';
 import 'package:clezigov/models/procedures/contact.dart';
 import 'package:clezigov/models/procedures/document.dart';
@@ -16,7 +16,7 @@ class Procedure {
   Category category;
   String estimatedTimeToComplete;
   double price;
-  List<Available> availability;
+  List<Availability> availability;
   List<Document> documents;
   List<Contact> contacts;
   ProcedureStatus status;
@@ -75,7 +75,7 @@ class Procedure {
       estimatedTimeToComplete: json['estimatedTimeToComplete'],
       price: json['price'],
       availability: (json['availability'] as List)
-          .map((available) => Available.fromJson(available))
+          .map((available) => Availability.fromJson(available))
           .toList(),
       documents: (json['documents'] as List)
           .map((document) => Document.fromJson(document))

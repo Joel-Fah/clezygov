@@ -61,6 +61,8 @@ dependencies:
   flutter_animate: ^4.5.0
   fluttertoast: ^8.2.5
   hugeicons: ^0.0.7
+  flutter_dotenv: ^5.2.1
+  supabase_flutter: ^2.8.0
 
 dev_dependencies:
   flutter_test:
@@ -120,6 +122,7 @@ flutter:
     - assets/images/
     - assets/fonts/
     - google_fonts/
+    - .env
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:clezigov/models/procedures/phone.dart';
 
 class Contact {

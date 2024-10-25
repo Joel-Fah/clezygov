@@ -1,11 +1,11 @@
-class Available {
+class Availability {
   String id;
   DateTime date;
   DateTime fromTime;
   DateTime toTime;
   bool isAvailable;
 
-  Available({
+  Availability({
     required this.id,
     required this.date,
     required this.fromTime,
@@ -25,8 +25,8 @@ class Available {
   }
 
   // fromJson
-  factory Available.fromJson(Map<String, dynamic> data) {
-    return Available(
+  factory Availability.fromJson(Map<String, dynamic> data) {
+    return Availability(
       id: data['id'],
       date: DateTime.parse(data['date']),
       fromTime: DateTime.parse(data['fromTime']),
@@ -42,36 +42,36 @@ class Available {
   }
 }
 
-final List<Available> availabilities = [
-  Available(
+final List<Availability> availabilities = [
+  Availability(
     id: '1',
     date: DateTime.now(),
     fromTime: DateTime.now(),
     toTime: DateTime.now(),
     isAvailable: true,
   ),
-  Available(
+  Availability(
     id: '2',
     date: DateTime.now(),
     fromTime: DateTime.now(),
     toTime: DateTime.now(),
     isAvailable: true,
   ),
-  Available(
+  Availability(
     id: '3',
     date: DateTime.now(),
     fromTime: DateTime.now(),
     toTime: DateTime.now(),
     isAvailable: true,
   ),
-  Available(
+  Availability(
     id: '4',
     date: DateTime.now(),
     fromTime: DateTime.now(),
     toTime: DateTime.now(),
     isAvailable: true,
   ),
-  Available(
+  Availability(
     id: '5',
     date: DateTime.now(),
     fromTime: DateTime.now(),

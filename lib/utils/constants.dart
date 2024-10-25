@@ -83,7 +83,7 @@ const String slightlySmilingFace = "assets/images/slightly_smiling_face.svg";
 const String grinningFace = "assets/images/grinning_face.svg";
 
 // Padding
-const EdgeInsets allPadding = const EdgeInsets.all(8.0);
+const EdgeInsets allPadding = EdgeInsets.all(8.0);
 
 // Shadow
 BoxShadow shadow = BoxShadow(

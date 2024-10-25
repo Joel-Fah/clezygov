@@ -1,5 +1,6 @@
 class Phone {
-  String id, phoneNumber;
+  String id;
+  String phoneNumber;
   bool isWhatsapp;
   bool isCalling;
   bool isMessaging;

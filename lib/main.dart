@@ -9,12 +9,22 @@ import 'package:clezigov/utils/constants.dart';
 import 'package:clezigov/utils/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'controllers/endorsements_controller.dart';
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Load .env file
+  await dotenv.load(fileName: ".env");
+
+  await Supabase.initialize(
+    url: 'https://xijqwdekbbynjsaiyvqd.supabase.co',
+    anonKey: dotenv.env['SUPABASE_ANONKEY']!,
+  );
 
   // Set color of status bar to scaffold bg
   SystemChrome.setSystemUIOverlayStyle(

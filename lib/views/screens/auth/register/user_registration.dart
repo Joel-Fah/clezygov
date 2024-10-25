@@ -7,7 +7,6 @@ import 'package:clezigov/views/widgets/buttons/primary_button.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:hugeicons/hugeicons.dart';
-import 'package:lucide_icons/lucide_icons.dart';
 
 import '../../../../models/cities.dart';
 import '../../../../utils/constants.dart';
@@ -76,7 +75,7 @@ class _UserRegistrationPageState extends State<UserRegistrationPage> {
     _nameController.dispose();
     _cityController.dispose();
     _occupationController.dispose();
-    // TODO: implement dispose
+    _genderController.dispose();
     super.dispose();
   }
 

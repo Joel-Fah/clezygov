@@ -21,7 +21,7 @@ class AppTheme {
           case TargetPlatform.android:
             return const Icon(HugeIcons.strokeRoundedArrowLeft02);
           default:
-            return const Icon(HugeIcons.strokeRoundedArrowLeft01);
+            return const Icon(HugeIcons.strokeRoundedArrowLeft01,);
         }
       },
     ),
