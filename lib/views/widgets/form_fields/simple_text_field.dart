@@ -40,10 +40,6 @@ class SimpleTextFormField extends StatelessWidget {
         inputFormatters: inputFormatters,
         autovalidateMode: AutovalidateMode.onUserInteraction,
         decoration: InputDecoration(
-          constraints: BoxConstraints(
-            minHeight: 48.0,
-            maxHeight: 56.0,
-          ),
           fillColor: Colors.white,
           filled: true,
           contentPadding: EdgeInsets.symmetric(

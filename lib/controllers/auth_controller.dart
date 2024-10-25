@@ -150,6 +150,96 @@ class AuthController extends GetxController {
     }
   }
 
+  // Sign up a user with email and password
+  void signUpWithEmailAndPassword(BuildContext context, {
+    required String email,
+    required String password,
+  }) async {
+    showLoadingDialog(context);
+
+    try {
+      // Try signing up with email and password
+      await FirebaseAuth.instance
+          .createUserWithEmailAndPassword(
+        email: email,
+        password: password,
+      )
+          .then(
+            (value) {
+          // Dismiss loading dialog
+          context.pop();
+
+          // Update the current user
+          _currentUser = value.user;
+
+          // Save user data to GetStorage
+          storage.write('user', _currentUser?.uid);
+
+          // Show a success snackbar
+          showNotificationSnackBar(
+            context: context,
+            icon: successIcon,
+            message: 'Signed in as\n${value.user!.email}!',
+            backgroundColor: successColor,
+          );
+
+          // Go to the home page
+          context.go(HomePage.routeName);
+        },
+      );
+
+      // Return the User object if successful
+      // return userCredential.user;
+    } on FirebaseAuthException catch (e) {
+      // Dismiss loading dialog
+      context.pop();
+
+      // Handle specific Firebase Authentication errors
+      if (e.code == 'weak-password') {
+        debugPrint('The password provided is too weak.');
+        showNotificationSnackBar(
+          context: context,
+          icon: dangerIcon,
+          message: 'The password provided is too weak.',
+          backgroundColor: dangerColor,
+        );
+      } else if (e.code == 'email-already-in-use') {
+        debugPrint('The account already exists for that email.');
+        showNotificationSnackBar(
+          context: context,
+          icon: dangerIcon,
+          message: 'The account already exists for that email.',
+          backgroundColor: dangerColor,
+        );
+      } else if (e.code == 'invalid-email') {
+        debugPrint('The email address is not valid.');
+        showNotificationSnackBar(
+          context: context,
+          icon: dangerIcon,
+          message: 'The email address is not valid.',
+          backgroundColor: dangerColor,
+        );
+      } else {
+        debugPrint('Something went wrong: ${e.message}');
+        showNotificationSnackBar(
+          context: context,
+          icon: dangerIcon,
+          message: 'Something went wrong: ${e.message}',
+          backgroundColor: dangerColor,
+        );
+      }
+    } catch (e) {
+      // Catch any other exceptions
+      debugPrint('Error signing up: $e');
+      showNotificationSnackBar(
+        context: context,
+        icon: dangerIcon,
+        message: 'An unknown error occurred.',
+        backgroundColor: dangerColor,
+      );
+    }
+  }
+
   // Sign in a user with Google
   void signInWithGoogle(BuildContext context) async {
     showLoadingDialog(context);
