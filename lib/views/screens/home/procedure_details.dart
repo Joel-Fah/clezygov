@@ -201,7 +201,9 @@ class _ProcedureDetailsPageState extends State<ProcedureDetailsPage>
                                 Gap(8.0),
                                 Expanded(
                                   child: ProcedureActionCard(
-                                    onTap: () {},
+                                    onTap: () {
+                                      showContactsModal(context, procedure);
+                                    },
                                     icon: HugeIcons
                                         .strokeRoundedLeftToRightListTriangle,
                                     title: "ToDo",
