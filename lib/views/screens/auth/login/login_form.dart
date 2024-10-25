@@ -95,6 +95,11 @@ class _LoginModalState extends State<LoginModal> {
                   if (value!.isEmpty) {
                     return "Email address is required";
                   }
+
+                  if (!RegExp(emailRegex).hasMatch(value)) {
+                    return 'Enter a valid email address';
+                  }
+
                   return null;
                 },
               ),

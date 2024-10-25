@@ -11,6 +11,8 @@ import 'package:hugeicons/hugeicons.dart';
 import '../../../../models/cities.dart';
 import '../../../../utils/constants.dart';
 import '../../../widgets/form_fields/dropdown_form_field.dart';
+import '../../../widgets/form_fields/password_form_field.dart';
+import '../../../widgets/tilt_icon.dart';
 
 class UserRegistrationPage extends StatefulWidget {
   const UserRegistrationPage({super.key});
@@ -39,11 +41,13 @@ class _UserRegistrationPageState extends State<UserRegistrationPage> {
   Gender? gender;
 
   // Form validation
-  bool isNameFilled = false, isCityFilled = false, isOccupationFilled = false, isGenderFilled = false;
+  bool isNameFilled = false,
+      isCityFilled = false,
+      isOccupationFilled = false,
+      isGenderFilled = false;
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     _nameController.addListener(() {
       setState(() {
@@ -174,13 +178,199 @@ class _UserRegistrationPageState extends State<UserRegistrationPage> {
               ),
               Gap(24.0),
               PrimaryButton.label(
-                onPressed: (isNameFilled && isCityFilled && isOccupationFilled && isGenderFilled)
+                onPressed: (isNameFilled &&
+                        isCityFilled &&
+                        isOccupationFilled &&
+                        isGenderFilled)
                     ? () {
                         if (_userRegistrationFormKey.currentState!.validate()) {
                           // Save and proceed
-                         context.goPush(AccountSetup.routeName);
+                          context.goPush(AccountSetup.routeName);
                         }
                       }
+                    : null,
+                label: "Save and proceed",
+              ),
+              Gap(16.0),
+              PrimaryButton.label(
+                onPressed: () {
+                  showModalBottomSheet(
+                    context: context,
+                    isScrollControlled: true,
+                    isDismissible: true,
+                    builder: (context) {
+                      return QuickRegistrationModal();
+                    },
+                  );
+                },
+                label: 'Wanna fill that later?',
+                backgroundColor: seedColorPalette.shade50,
+                labelColor: seedColor,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class QuickRegistrationModal extends StatefulWidget {
+  const QuickRegistrationModal({super.key});
+
+  @override
+  State<QuickRegistrationModal> createState() => _QuickRegistrationModalState();
+}
+
+class _QuickRegistrationModalState extends State<QuickRegistrationModal> {
+  final _userQuickRegistrationFormKey = GlobalKey<FormState>();
+
+  // Quick registration controllers
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _confirmPasswordController =
+  TextEditingController();
+
+  // Form fields
+  String? email, password, confirmPassword;
+
+  // Form validation
+  bool isEmailFilled = false,
+      isPasswordFilled = false,
+      isConfirmPasswordFilled = false;
+
+  @override
+  void initState() {
+    super.initState();
+    // Quick registration
+    _emailController.addListener(() {
+      setState(() {
+        isEmailFilled = _emailController.text.isNotEmpty;
+      });
+    });
+
+    _passwordController.addListener(() {
+      setState(() {
+        isPasswordFilled = _passwordController.text.isNotEmpty;
+      });
+    });
+
+    _confirmPasswordController.addListener(() {
+      setState(() {
+        isConfirmPasswordFilled = _confirmPasswordController.text.isNotEmpty;
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    _confirmPasswordController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () =>
+          FocusManager.instance.primaryFocus?.unfocus(),
+      child: Padding(
+        padding: EdgeInsets.only(
+          bottom: MediaQuery.of(context).viewInsets.bottom,
+        ),
+        child: Form(
+          key: _userQuickRegistrationFormKey,
+          child: ListView(
+            shrinkWrap: true,
+            padding: allPadding * 1.25,
+            physics: const AlwaysScrollableScrollPhysics(),
+            children: [
+              TiltIcon(
+                icon: HugeIcons.strokeRoundedTimer02,
+              ),
+              Gap(8.0),
+              Text(
+                "Well at least, let\'s know your email and set up a password quick.",
+                style: AppTextStyles.h2,
+                textAlign: TextAlign.center,
+              ),
+              Gap(4.0),
+              Text(
+                "Don\'t worry, you can still fill the rest later.",
+                style: AppTextStyles.body.copyWith(
+                  color: disabledColor,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              Gap(24.0),
+              SimpleTextFormField(
+                controller: _emailController,
+                hintText: "Email address",
+                prefixIcon: Icon(HugeIcons.strokeRoundedMail02),
+                keyboardType: TextInputType.emailAddress,
+                onChanged: (value) => email = value,
+                validator: (value) {
+                  if (value!.isEmpty) {
+                    return "Email address is required";
+                  }
+
+                  if (!RegExp(emailRegex).hasMatch(value)) {
+                    return 'Enter a valid email address';
+                  }
+
+                  return null;
+                },
+              ),
+              Gap(16.0),
+              PasswordTextFormField(
+                controller: _passwordController,
+                hintText: "Password",
+                prefixIcon:
+                Icon(HugeIcons.strokeRoundedPinCode),
+                onChanged: (value) => password = value,
+                validator: (value) {
+                  if (value!.isEmpty) {
+                    return "Password is required";
+                  }
+                  return null;
+                },
+              ),
+              Gap(16.0),
+              PasswordTextFormField(
+                controller: _confirmPasswordController,
+                hintText: "Confirm password",
+                prefixIcon:
+                Icon(HugeIcons.strokeRoundedLockKey),
+                onChanged: (value) => confirmPassword = value,
+                validator: (value) {
+                  if (value!.isEmpty) {
+                    return "Password is required";
+                  }
+
+                  if (value != _passwordController.text) {
+                    return "Passwords do not match";
+                  }
+
+                  return null;
+                },
+              ),
+              Gap(16.0),
+              PrimaryButton.label(
+                onPressed: (isEmailFilled &&
+                    isPasswordFilled &&
+                    isConfirmPasswordFilled)
+                    ? () {
+                  if (_userQuickRegistrationFormKey
+                      .currentState!
+                      .validate()) {
+                    authController.signUpWithEmailAndPassword(
+                      context,
+                      email: _emailController.text.trim(),
+                      password: _passwordController.text,
+                    );
+                  }
+                }
                     : null,
                 label: "Save and proceed",
               ),
@@ -191,3 +381,4 @@ class _UserRegistrationPageState extends State<UserRegistrationPage> {
     );
   }
 }
+
