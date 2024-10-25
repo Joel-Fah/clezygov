@@ -5,10 +5,12 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:gap/gap.dart';
+import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
+import '../../../../controllers/auth_controller.dart';
 import '../../../widgets/alert_dialog.dart';
 import '../../../widgets/buttons/secondary_button.dart';
 import 'login_form.dart';
@@ -20,6 +22,8 @@ class LoginPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final AuthController authController = Get.find<AuthController>();
+
     return GestureDetector(
       onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
       child: Scaffold(
@@ -70,7 +74,7 @@ class LoginPage extends StatelessWidget {
                         // mainAxisSize: MainAxisSize.min,
                         children: [
                           PrimaryButton.child(
-                            onPressed: () {},
+                            onPressed: () => authController.signInWithGoogle(context),
                             backgroundColor: dangerColor,
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,

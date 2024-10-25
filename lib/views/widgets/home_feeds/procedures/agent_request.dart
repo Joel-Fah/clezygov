@@ -137,7 +137,7 @@ class AgentPage extends StatelessWidget {
                         if (snapshot.connectionState == ConnectionState.waiting) {
                           return SizedBox(
                             width: 110,
-                            child: LoadingBuilder(
+                            child: DefaultLoadingBuilder(
                               primaryColor: seedColorPalette.shade100,
                               secondaryColor: Colors.white.withOpacity(0.3),
                             ),

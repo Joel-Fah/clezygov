@@ -125,7 +125,7 @@ class SearchProceduresDelegate extends SearchDelegate<String> {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Animate(
             effects: [FadeEffect(), MoveEffect()],
-            child: Center(child: LoadingBuilder()),
+            child: Center(child: DefaultLoadingBuilder()),
           );
         }
 

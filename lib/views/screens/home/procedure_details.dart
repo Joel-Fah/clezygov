@@ -92,7 +92,7 @@ class _ProcedureDetailsPageState extends State<ProcedureDetailsPage>
                 background: CachedNetworkImage(
                   imageUrl: procedure.images[1].path,
                   placeholder: (context, url) => Center(
-                    child: LoadingBuilder(),
+                    child: DefaultLoadingBuilder(),
                   ),
                   errorWidget: (context, url, error) => Container(
                     height: mediaHeight(context),
@@ -183,7 +183,7 @@ class _ProcedureDetailsPageState extends State<ProcedureDetailsPage>
                                             ],
                                             child: BackdropFilter(
                                               filter: blurFilter,
-                                              child: LoadingBuilder(),
+                                              child: DefaultLoadingBuilder(),
                                             ),
                                           );
                                         },

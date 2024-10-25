@@ -175,7 +175,7 @@ class _BuildLayoutState extends State<BuildLayout> {
               ),
               child: CachedNetworkImage(
                 imageUrl: widget.image,
-                placeholder: (context, url) => LoadingBuilder(
+                placeholder: (context, url) => DefaultLoadingBuilder(
                   primaryColor: widget.imageColor,
                   secondaryColor: widget.imageColor.withOpacity(.3),
                 ),

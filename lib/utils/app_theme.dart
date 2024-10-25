@@ -86,7 +86,7 @@ class AppTheme {
     dialogTheme: DialogTheme(
       backgroundColor: scaffoldBgColor,
       titleTextStyle: AppTextStyles.h2,
-      insetPadding: EdgeInsets.symmetric(horizontal: 20.0),
+      insetPadding: EdgeInsets.symmetric(horizontal: 28.0),
       shape: RoundedRectangleBorder(
         borderRadius: borderRadius * 3.5,
       ),

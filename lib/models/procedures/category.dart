@@ -19,8 +19,8 @@ class Category {
     return {
       'id': id,
       'name': name,
-      'createdAt': createdAt.toIso8601String(),
-      'lastUpdatedAt': lastUpdatedAt.toIso8601String(),
+      'created_at': createdAt,
+      'updated_at': lastUpdatedAt,
     };
   }
 
@@ -29,8 +29,8 @@ class Category {
     return Category(
       id: data['id'],
       name: data['name'],
-      createdAt: DateTime.parse(data['createdAt']),
-      lastUpdatedAt: DateTime.parse(data['lastUpdatedAt']),
+      createdAt: DateTime.parse(data['created_at']),
+      lastUpdatedAt: DateTime.parse(data['updated_at']),
     );
   }
 
@@ -40,6 +40,7 @@ class Category {
     return 'Category{id: $id, name: $name, createdAt: $createdAt, lastUpdatedAt: $lastUpdatedAt}';
   }
 }
+
 
 List<Category> categories = [
   Category(
@@ -109,3 +110,21 @@ List<Map<Category, IconData>> categoryIcons = [
   {categories[7]: HugeIcons.strokeRoundedLabor},
   {categories[8]: HugeIcons.strokeRoundedTestTube01},
 ];
+
+
+
+
+Future<void> insertCategory(Category category, final supabase) async {
+  try {
+    final response = await supabase
+        .from("Category")
+        .insert(category.toJson());
+
+    if(response.error != null){
+      throw response.error!;
+    }
+  } catch(e) {
+    print("Error inserting category: $e");
+    rethrow;
+  }
+}

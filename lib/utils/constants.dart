@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:clezigov/views/widgets/loading_builder.dart';
 import 'package:flutter/material.dart';
 import 'package:hugeicons/hugeicons.dart';
 
@@ -207,5 +208,16 @@ class AppInputBorders {
       color: Colors.transparent,
       width: 1.5,
     ),
+  );
+}
+
+// Show loading dialog
+void showLoadingDialog(BuildContext context) {
+  showDialog(
+    context: context,
+    barrierDismissible: false,
+    builder: (context) {
+      return const DefaultLoadingBuilder();
+    },
   );
 }

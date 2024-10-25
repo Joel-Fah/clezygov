@@ -1,3 +1,4 @@
+import 'package:clezigov/controllers/auth_controller.dart';
 import 'package:clezigov/controllers/bookmarks_controller.dart';
 import 'package:clezigov/controllers/notifications_controller.dart';
 import 'package:clezigov/controllers/procedures_controller.dart';
@@ -7,29 +8,26 @@ import 'package:clezigov/controllers/select_categories_controller.dart';
 import 'package:clezigov/utils/app_theme.dart';
 import 'package:clezigov/utils/constants.dart';
 import 'package:clezigov/utils/routes.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'controllers/endorsements_controller.dart';
+import 'firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Load .env file
-  await dotenv.load(fileName: ".env");
-
-  await Supabase.initialize(
-    url: dotenv.env['SUPABASE_URL']!,
-    anonKey: dotenv.env['SUPABASE_ANON_KEY']!,
+  // Initialise Firebase options
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
   );
 
   // Set color of status bar to scaffold bg
   SystemChrome.setSystemUIOverlayStyle(
     SystemUiOverlayStyle(
-      statusBarColor: scaffoldBgColor,
+      statusBarColor: scaffoldBgColor.withOpacity(0),
       statusBarIconBrightness: Brightness.dark,
       systemNavigationBarColor: scaffoldBgColor,
       systemNavigationBarIconBrightness: Brightness.dark,
@@ -59,6 +57,7 @@ class MyApp extends StatelessWidget {
     Get.put(ReactionsController());
     Get.put(ProceduresController());
     Get.put(ProfilePageController());
+    Get.put(AuthController());
 
     return GetMaterialApp.router(
       title: 'CleziGov',

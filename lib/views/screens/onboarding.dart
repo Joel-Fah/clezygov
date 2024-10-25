@@ -1,5 +1,6 @@
 import 'package:clezigov/models/onboarding.dart';
 import 'package:clezigov/utils/constants.dart';
+import 'package:clezigov/utils/routes.dart';
 import 'package:clezigov/views/screens/auth/login/login.dart';
 import 'package:clezigov/views/widgets/buttons/primary_button.dart';
 import 'package:flutter/material.dart';
@@ -22,8 +23,9 @@ class _OnboardPageState extends State<OnboardPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      extendBodyBehindAppBar: true,
       body: PageView.builder(
-        physics: const BouncingScrollPhysics(),
+        physics: const AlwaysScrollableScrollPhysics(),
         controller: controller,
         onPageChanged: (value) {
           setState(() {
@@ -47,7 +49,7 @@ class _OnboardPageState extends State<OnboardPage> {
               Gap(24.0),
               Padding(
                 padding: const EdgeInsets.symmetric(
-                  horizontal: 10.0,
+                  horizontal: 16.0,
                   vertical: 24.0,
                 ),
                 child: Column(
@@ -71,7 +73,7 @@ class _OnboardPageState extends State<OnboardPage> {
                                 width: currentIndex == index ? 16.0 : 8.0,
                                 height: 8.0,
                                 margin:
-                                    const EdgeInsets.symmetric(horizontal: 4.0),
+                                    const EdgeInsets.symmetric(horizontal: 2.0),
                                 decoration: BoxDecoration(
                                   color: currentIndex == index
                                       ? seedColor
@@ -102,6 +104,9 @@ class _OnboardPageState extends State<OnboardPage> {
                       onPressed: () {
                         if (currentIndex ==
                             onboardingData.indexOf(onboardingData.last)) {
+                          // update onboarded value in storage
+                          authController.hasOnboarded = true;
+
                           // Go to login page using go router
                           context.go(LoginPage.routeName);
                         } else {

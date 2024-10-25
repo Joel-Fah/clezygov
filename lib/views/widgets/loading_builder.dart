@@ -3,8 +3,8 @@ import 'package:loading_animation_widget/loading_animation_widget.dart';
 
 import '../../utils/constants.dart';
 
-class LoadingBuilder extends StatelessWidget {
-  const LoadingBuilder({super.key, this.primaryColor = seedColor, this.secondaryColor});
+class DefaultLoadingBuilder extends StatelessWidget {
+  const DefaultLoadingBuilder({super.key, this.primaryColor = seedColor, this.secondaryColor});
   final Color? primaryColor, secondaryColor;
 
   @override

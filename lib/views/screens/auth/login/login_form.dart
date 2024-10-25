@@ -32,8 +32,35 @@ class _LoginModalState extends State<LoginModal> {
   final TextEditingController _passwordController = TextEditingController();
 
   // Forms fields
-  String? username;
+  String? email;
   String? password;
+
+  // Form validation
+  bool isEmailFilled = false;
+  bool isPasswordFilled = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _emailController.addListener(() {
+      setState(() {
+        isEmailFilled = _emailController.text.isNotEmpty;
+      });
+    });
+
+    _passwordController.addListener(() {
+      setState(() {
+        isPasswordFilled = _passwordController.text.isNotEmpty;
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -61,12 +88,12 @@ class _LoginModalState extends State<LoginModal> {
               Gap(24.0),
               SimpleTextFormField(
                 controller: _emailController,
-                hintText: "Email address or username",
-                prefixIcon: Icon(HugeIcons.strokeRoundedMailAtSign02),
-                onChanged: (value) => username = value,
+                hintText: "Email address",
+                prefixIcon: Icon(HugeIcons.strokeRoundedMail02),
+                onChanged: (value) => email = value,
                 validator: (value) {
                   if (value!.isEmpty) {
-                    return "Email address or username is required";
+                    return "Email address is required";
                   }
                   return null;
                 },
@@ -115,23 +142,15 @@ class _LoginModalState extends State<LoginModal> {
               ),
               Gap(24.0),
               PrimaryButton.label(
-                onPressed: () {
+                onPressed: (isEmailFilled && isPasswordFilled) ? () {
                   if (_loginFormKey.currentState!.validate()) {
-                    // delayed pop
-                    Future.delayed(
-                      duration * 4,
-                      () => context.pop(),
-                    );
-
-                    // show success notification
-                    showNotificationSnackBar(
-                      context: context,
-                      message: "Hurray, you're in! Welcome back.",
-                      backgroundColor: successColor,
-                      icon: successIcon,
+                    authController.signInWithEmailAndPassword(
+                      context,
+                      email: _emailController.text,
+                      password: _passwordController.text,
                     );
                   }
-                },
+                } : null,
                 label: "Login into my account",
               ),
               Gap(8.0),

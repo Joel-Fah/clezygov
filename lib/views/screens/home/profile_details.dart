@@ -110,7 +110,7 @@ class ProfileDetailsPage extends StatelessWidget {
             ),
             child: CachedNetworkImage(
               imageUrl: image,
-              placeholder: (context, url) => LoadingBuilder(
+              placeholder: (context, url) => DefaultLoadingBuilder(
                 primaryColor: imageColor,
                 secondaryColor: imageColor.withOpacity(.3),
               ),

@@ -18,12 +18,19 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter/foundation.dart';
 
+import '../controllers/auth_controller.dart';
 import '../views/screens/auth/register/user_registration.dart';
 
 final rootNavigatorKey = GlobalKey<NavigatorState>();
+final AuthController authController = AuthController();
 
 final GoRouter router = GoRouter(
-  initialLocation: HomePage.routeName,
+  // initialLocation: OnboardPage.routeName,
+  initialLocation: authController.isUserSignedIn()
+      ? HomePage.routeName
+      : authController.hasOnboarded
+        ? LoginPage.routeName
+        : OnboardPage.routeName,
   navigatorKey: rootNavigatorKey,
   routes: [
     GoRoute(
