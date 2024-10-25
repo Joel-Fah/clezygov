@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:gap/gap.dart';
 import 'package:hugeicons/hugeicons.dart';
-import 'package:wavy_slider/wavy_slider.dart';
+// import 'package:wavy_slider/wavy_slider.dart';
 
 import '../../../utils/constants.dart';
 import '../squiggle_pattern.dart';

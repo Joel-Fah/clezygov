@@ -1,3 +1,4 @@
+import 'package:clezigov/views/widgets/buttons/primary_button.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
@@ -27,16 +28,30 @@ void showTodoModal(BuildContext context, Procedure procedure) {
             TiltIcon(
               icon: HugeIcons.strokeRoundedLeftToRightListTriangle,
             ),
-            Gap(8.0),
+            Gap(10.0),
             Text(
               "Welcome to the \n ToDo mode",
               style: AppTextStyles.h2,
               textAlign: TextAlign.center,
             ),
-            Text(
-              "We aim at assisting you the best we can. This mode will enable you to complete your procedures step wise without having to worry about work-arounds. Get straight to your target.",
-              style: AppTextStyles.body,
-              textAlign: TextAlign.center,
+            Gap(15.0),
+            Padding(
+              padding: const EdgeInsets.all(18.0),
+              child: Text(
+                "We aim at assisting you the best we can. This mode will enable you to complete your procedures step wise without having to worry about work-arounds. Get straight to your target.",
+                style: AppTextStyles.body,
+                textAlign: TextAlign.left,
+              ),
+            ),
+            Gap(28.0),
+            Padding(
+              padding: const EdgeInsets.only(left: 18.0, right: 18),
+              child: PrimaryButton.label(
+                onPressed: () {
+                  context.go('/todo-mode');
+                },
+                label: "Understood",
+              ),
             ),
           ]),
           Positioned(
