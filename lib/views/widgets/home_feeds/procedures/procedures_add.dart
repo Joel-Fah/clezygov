@@ -50,51 +50,46 @@ class _ProcedureAddPageState extends State<ProcedureAddPage> {
       appBar: AppBar(
         title: Text('Add a new procedure'),
       ),
-      body: ListView(
-        padding: allPadding * 1.5,
-        physics: const AlwaysScrollableScrollPhysics(),
-        children: [
-          Animate(
-            effects: const [FadeEffect(), MoveEffect()],
-            child: SvgPicture.asset(
-              procedureAddImage,
-              height: mediaWidth(context) / 1.75,
+      body: Form(
+        key: _addProcedureFormKey,
+        child: ListView(
+          padding: allPadding * 1.5,
+          physics: const AlwaysScrollableScrollPhysics(),
+          children: [
+            Animate(
+              effects: const [FadeEffect(), MoveEffect()],
+              child: SvgPicture.asset(
+                procedureAddImage,
+                height: mediaWidth(context) / 1.75,
+              ),
             ),
-          ),
-          Form(
-            key: _addProcedureFormKey,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                  child: Text(
-                    'Procedure title',
-                    style: AppTextStyles.small.copyWith(color: disabledColor),
-                  ),
-                ),
-                const Gap(4.0),
-                SimpleTextFormField(
-                  controller: _procedureTitleController,
-                  hintText: 'Title of the procedure',
-                  textCapitalization: TextCapitalization.words,
-                  prefixIcon:
-                  const Icon(HugeIcons.strokeRoundedDirectionRight02),
-                  minLines: 1,
-                  maxLines: 2,
-                  onChanged: (value) => procedureTitle = value,
-                  validator: (value) {
-                    if (value!.isEmpty) {
-                      return 'You must specify a procedure title.';
-                    }
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12.0),
+              child: Text(
+                'Procedure title',
+                style: AppTextStyles.small.copyWith(color: disabledColor),
+              ),
+            ),
+            const Gap(4.0),
+            SimpleTextFormField(
+              controller: _procedureTitleController,
+              hintText: 'Title of the procedure',
+              textCapitalization: TextCapitalization.words,
+              prefixIcon:
+              const Icon(HugeIcons.strokeRoundedDirectionRight02),
+              minLines: 1,
+              maxLines: 2,
+              onChanged: (value) => procedureTitle = value,
+              validator: (value) {
+                if (value!.isEmpty) {
+                  return 'You must specify a procedure title.';
+                }
 
-                    return null;
-                  },
-                ),
-              ],
+                return null;
+              },
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
