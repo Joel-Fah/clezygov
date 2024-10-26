@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:clezigov/controllers/procedures_controller.dart';
 import 'package:clezigov/controllers/reactions_controller.dart';
@@ -10,6 +8,7 @@ import 'package:clezigov/views/screens/home/procedure_action_card.dart';
 import 'package:clezigov/views/screens/home/read_more_text.dart';
 import 'package:clezigov/views/screens/home/sliver_appbar_delegate.dart';
 import 'package:clezigov/views/widgets/home_feeds/procedures/contacts_modal.dart';
+import 'package:clezigov/views/widgets/home_feeds/procedures/todo_modal.dart';
 import 'package:clezigov/views/widgets/home_feeds/procedures_feed.dart';
 import 'package:clezigov/views/widgets/loading_builder.dart';
 import 'package:clezigov/views/widgets/buttons/text_button.dart';
@@ -201,7 +200,9 @@ class _ProcedureDetailsPageState extends State<ProcedureDetailsPage>
                                 Gap(8.0),
                                 Expanded(
                                   child: ProcedureActionCard(
-                                    onTap: () {},
+                                    onTap: () {
+                                      showTodoModal(context, procedure);
+                                    },
                                     icon: HugeIcons
                                         .strokeRoundedLeftToRightListTriangle,
                                     title: "ToDo",
@@ -306,12 +307,16 @@ class _ProcedureDetailsPageState extends State<ProcedureDetailsPage>
                               icon: Icon(HugeIcons.strokeRoundedRoute02),
                             ),
                             IconButton(
-                              onPressed: () {},
+                              onPressed: () {
+                                showTodoModal(context, procedure);
+                              },
                               icon: Icon(HugeIcons
                                   .strokeRoundedLeftToRightListTriangle),
                             ),
                             IconButton(
-                              onPressed: () {},
+                              onPressed: () {
+                                context.goPush(AgentPage.routeName);
+                              },
                               icon: Icon(
                                 HugeIcons.strokeRoundedLabor,
                                 color: seedColor,

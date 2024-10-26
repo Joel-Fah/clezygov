@@ -107,10 +107,12 @@ class AgentPage extends StatelessWidget {
                   )
                 ],
               ),
+              Gap(68.0),
             ],
           ),
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+            padding:
+                const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
             child: PrimaryButton.child(
               onPressed: () {},
               height: 56.0,
@@ -120,7 +122,8 @@ class AgentPage extends StatelessWidget {
                   children: [
                     Text(
                       "Request an agent",
-                      style: AppTextStyles.body.copyWith(color: scaffoldBgColor),
+                      style:
+                          AppTextStyles.body.copyWith(color: scaffoldBgColor),
                     ),
                     Gap(8.0),
                     VerticalDivider(
@@ -128,13 +131,17 @@ class AgentPage extends StatelessWidget {
                     ),
                     Gap(8.0),
                     FutureBuilder(
-                      future: Future.delayed(duration * 5, () {
-                        return "3500";
-                      },),
+                      future: Future.delayed(
+                        duration * 5,
+                        () {
+                          return "3500*";
+                        },
+                      ),
                       builder: (context, snapshot) {
                         final data = snapshot.data;
 
-                        if (snapshot.connectionState == ConnectionState.waiting) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
                           return SizedBox(
                             width: 110,
                             child: DefaultLoadingBuilder(
@@ -145,14 +152,18 @@ class AgentPage extends StatelessWidget {
                         }
 
                         return Animate(
-                          effects: [FadeEffect(), MoveEffect(begin: Offset(-10, 0), end: Offset(10, 0))],
+                          effects: [
+                            FadeEffect(),
+                            MoveEffect(
+                                begin: Offset(-10, 0), end: Offset(10, 0))
+                          ],
                           child: Container(
-                            padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+                            padding: EdgeInsets.symmetric(
+                                vertical: 8.0, horizontal: 16.0),
                             decoration: BoxDecoration(
                                 borderRadius: borderRadius * 2,
                                 color: scaffoldBgColor,
-                                boxShadow: [shadow]
-                            ),
+                                boxShadow: [shadow]),
                             child: Text("${addThousandSeparator(data!)} FCFA"),
                           ),
                         );
