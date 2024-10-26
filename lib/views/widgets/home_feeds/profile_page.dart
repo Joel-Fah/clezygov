@@ -38,6 +38,8 @@ class ProfilePage extends StatelessWidget {
   Widget build(BuildContext context) {
     final AuthController authController = Get.find<AuthController>();
 
+    
+
     return OrientationBuilder(builder: (context, orientation) {
       if (orientation == Orientation.landscape) {
         return GetBuilder<ProfilePageController>(builder: (profileController) {
