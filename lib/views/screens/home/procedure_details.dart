@@ -1,4 +1,3 @@
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:clezigov/controllers/procedures_controller.dart';
 import 'package:clezigov/controllers/reactions_controller.dart';
@@ -308,12 +307,16 @@ class _ProcedureDetailsPageState extends State<ProcedureDetailsPage>
                               icon: Icon(HugeIcons.strokeRoundedRoute02),
                             ),
                             IconButton(
-                              onPressed: () {},
+                              onPressed: () {
+                                showTodoModal(context, procedure);
+                              },
                               icon: Icon(HugeIcons
                                   .strokeRoundedLeftToRightListTriangle),
                             ),
                             IconButton(
-                              onPressed: () {},
+                              onPressed: () {
+                                context.goPush(AgentPage.routeName);
+                              },
                               icon: Icon(
                                 HugeIcons.strokeRoundedLabor,
                                 color: seedColor,

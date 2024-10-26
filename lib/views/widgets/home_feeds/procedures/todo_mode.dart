@@ -1,22 +1,31 @@
 import 'package:clezigov/controllers/procedures_controller.dart';
+import 'package:clezigov/controllers/task_controller.dart';
 import 'package:clezigov/models/procedures/procedures.dart';
 import 'package:clezigov/utils/constants.dart';
+import 'package:clezigov/utils/routes.dart';
+import 'package:clezigov/utils/utility_functions.dart';
+import 'package:clezigov/views/screens/home/procedure_details.dart';
+import 'package:clezigov/views/widgets/home_feeds/procedures/agent_request.dart';
 import 'package:clezigov/views/widgets/rating_modal.dart';
 import 'package:clezigov/views/widgets/task_item.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:get/get.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hugeicons/hugeicons.dart';
 
 class TodoModePage extends StatefulWidget {
-  const TodoModePage({super.key});
+  const TodoModePage({super.key, required this.procedureId});
 
   static const String routeName = '/todo-mode';
+  final String procedureId;
 
   @override
   State<TodoModePage> createState() => _TodoModePageState();
 }
 
 class _TodoModePageState extends State<TodoModePage> {
+  final TaskController controller = Get.put(TaskController());
   var total;
 
   var current;
@@ -25,14 +34,15 @@ class _TodoModePageState extends State<TodoModePage> {
 
   @override
   Widget build(BuildContext context) {
-    
-     ProceduresController proceduresController = ProceduresController();
-     Procedure procedure =
-        proceduresController.getProcedureById("1");
+    ProceduresController proceduresController = ProceduresController();
+    Procedure procedure =
+        proceduresController.getProcedureById(widget.procedureId);
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-            onPressed: () => {},
+            onPressed: () {
+              context.pop();
+            },
             icon: Icon(
               Icons.arrow_back,
               size: 28.0,
@@ -51,10 +61,14 @@ class _TodoModePageState extends State<TodoModePage> {
             children: [
               Gap(8),
               Center(
-                child: Text(
-                  "33.8%",
-                  style: AppTextStyles.h1.copyWith(fontSize: 44),
-                  textAlign: TextAlign.center,
+                child: GetBuilder<TaskController>(
+                  builder: (TaskController controller) {
+                    return Text(
+                      "${controller.completionPercentage.toStringAsFixed(2)}",
+                      style: AppTextStyles.h1.copyWith(fontSize: 44),
+                      textAlign: TextAlign.center,
+                    );
+                  },
                 ),
               ),
               Gap(18),
@@ -130,11 +144,14 @@ class _TodoModePageState extends State<TodoModePage> {
                     padding: const EdgeInsets.symmetric(
                         horizontal: 3.5, vertical: 1.0),
                     physics: const NeverScrollableScrollPhysics(),
-                    itemCount: 10,
+                    itemCount: 6,
                     itemBuilder: (context, index) {
                       return Column(
                         children: [
-                          TaskItem(),
+                          Obx(() => TaskItem(
+                                isChecked: controller.checkedTasks[index],
+                                onChanged: () => {controller.toggleTask(index)},
+                              )),
                           Gap(8),
                           Divider(
                             height: 1,

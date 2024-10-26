@@ -152,9 +152,14 @@ final GoRouter router = GoRouter(
     ),
     GoRoute(
       parentNavigatorKey: rootNavigatorKey,
-      path: TodoModePage.routeName,
+      path: "${TodoModePage.routeName}/:id",
       name: removeBeginningSlash(TodoModePage.routeName),
-      builder: (context, state) => const TodoModePage(),
+      builder: (context, state) {
+        return TodoModePage(
+          key: state.pageKey,
+          procedureId: state.pathParameters['id']!,
+        );
+      },
     ),
   ],
 );

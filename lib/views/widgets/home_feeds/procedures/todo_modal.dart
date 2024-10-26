@@ -1,4 +1,6 @@
+import 'package:clezigov/utils/utility_functions.dart';
 import 'package:clezigov/views/widgets/buttons/primary_button.dart';
+import 'package:clezigov/views/widgets/home_feeds/procedures/todo_mode.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
@@ -48,7 +50,10 @@ void showTodoModal(BuildContext context, Procedure procedure) {
               padding: const EdgeInsets.only(left: 18.0, right: 18),
               child: PrimaryButton.label(
                 onPressed: () {
-                  context.go('/todo-mode');
+                  context.pushNamed(
+                    removeBeginningSlash(TodoModePage.routeName),
+                    pathParameters: {'id': procedure.id},
+                  );
                 },
                 label: "Understood",
               ),

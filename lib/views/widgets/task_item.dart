@@ -4,24 +4,28 @@ import 'package:gap/gap.dart';
 import 'package:hugeicons/hugeicons.dart';
 
 class TaskItem extends StatefulWidget {
-  const TaskItem({super.key});
+    TaskItem({super.key, required this.onChanged, required this.isChecked});
+    final VoidCallback onChanged;
+        bool isChecked;
+
+
 
   @override
   State<TaskItem> createState() => _TaskItemState();
 }
 
 class _TaskItemState extends State<TaskItem> {
-  bool isChecked = false;
+
 
   @override
   Widget build(BuildContext context) {
     return Row(
       children: [
-        isChecked
+        widget.isChecked
             ? InkWell(
                 onTap: () => {
                   setState(() {
-                    isChecked = false;
+                    widget.isChecked = false;
                   })
                 },
                 child: Icon(
@@ -35,10 +39,10 @@ class _TaskItemState extends State<TaskItem> {
                 shape: CircleBorder(
                   side: BorderSide(),
                 ),
-                value: isChecked,
+                value: widget.isChecked,
                 onChanged: (bool? value) {
                   setState(() {
-                    isChecked = value ?? false;
+                    widget.isChecked = value ?? false;
                   });
                 },
               ),
@@ -49,7 +53,7 @@ class _TaskItemState extends State<TaskItem> {
             'Task description Venenatis urna eget a viverra vel dui egestas auctor magna. Lorem massa.',
             style: TextStyle(
               decoration:
-                  isChecked ? TextDecoration.lineThrough : TextDecoration.none,
+                  widget.isChecked ? TextDecoration.lineThrough : TextDecoration.none,
             ),
           ),
         ),
@@ -58,3 +62,26 @@ class _TaskItemState extends State<TaskItem> {
 
   }
 }
+
+
+/*
+class TaskItem extends StatelessWidget {
+  final bool isChecked;
+  final VoidCallback onChanged;
+
+  const TaskItem({
+    Key? key,
+    required this.isChecked,
+    required this.onChanged,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return CheckboxListTile(
+      value: isChecked, 1 
+      onChanged: onChanged,
+      // ... other properties
+    );
+  }
+}
+ */
