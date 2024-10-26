@@ -81,6 +81,7 @@ const String angryFace = "assets/images/angry_face.svg";
 const String frowningFace = "assets/images/frowning_face.svg";
 const String neutralFace = "assets/images/neutral_face.svg";
 const String slightlySmilingFace = "assets/images/slightly_smiling_face.svg";
+const String agentCap = "assets/images/agent_cap.svg";
 const String grinningFace = "assets/images/grinning_face.svg";
 
 // Padding
