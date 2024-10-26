@@ -129,3 +129,8 @@ String getFormattedDate(DateTime date) {
 String removeBeginningSlash(String path) {
   return path.startsWith('/') ? path.substring(1) : path;
 }
+
+// a function to extract name from email address
+String extractNameFromEmail(String email) {
+  return email.split('@')[0];
+}

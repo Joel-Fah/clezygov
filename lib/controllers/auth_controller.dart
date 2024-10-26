@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -5,6 +6,7 @@ import 'package:get_storage/get_storage.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
+import '../models/profile.dart';
 import '../utils/constants.dart';
 import '../views/screens/home/home.dart';
 import '../views/screens/onboarding.dart';
@@ -13,6 +15,7 @@ import '../views/widgets/notification_snackbar.dart';
 class AuthController extends GetxController {
   RxBool _isLoginFormDisplay = true.obs;
   User? _currentUser;
+  Profile? _userProfile;
   final GetStorage storage = GetStorage();
 
 
@@ -20,9 +23,7 @@ class AuthController extends GetxController {
 
   User? get user => _currentUser;
 
-  // check if user has gone through onboarding
-  bool get hasOnboarded => storage.read('onboarded') ?? false;
-  set hasOnboarded(bool value) => storage.write('onboarded', value);
+  Profile? get userProfile => _userProfile;
 
   @override
   void onInit() {
@@ -74,6 +75,20 @@ class AuthController extends GetxController {
           // Update the current user
           _currentUser = value.user;
 
+          // Get the user profile
+          FirebaseFirestore.instance
+              .collection('profile')
+              .doc(_currentUser!.uid)
+              .get()
+              .then((DocumentSnapshot documentSnapshot) {
+            if (documentSnapshot.exists) {
+              debugPrint('Profile exists');
+              _userProfile = Profile.fromJson(documentSnapshot.data() as Map<String, dynamic>);
+            } else {
+              debugPrint('Profile does not exist');
+            }
+          });
+
           // Save user data to GetStorage
           storage.write('user', _currentUser?.uid);
 
@@ -90,14 +105,21 @@ class AuthController extends GetxController {
         },
       );
 
-      // Return the User object if successful
       // return userCredential.user;
     } on FirebaseAuthException catch (e) {
       // Dismiss loading dialog
       context.pop();
 
       // Handle specific Firebase Authentication errors
-      if (e.code == 'user-not-found') {
+      if (e.code == 'network-request-failed') {
+        debugPrint('No internet connection.');
+        showNotificationSnackBar(
+          context: context,
+          icon: dangerIcon,
+          message: 'Check you internet connection and try again.',
+          backgroundColor: dangerColor,
+        );
+      } else if (e.code == 'user-not-found') {
         debugPrint('No user found for that email.');
         showNotificationSnackBar(
           context: context,
@@ -165,12 +187,26 @@ class AuthController extends GetxController {
         password: password,
       )
           .then(
-            (value) {
+            (value) async {
           // Dismiss loading dialog
           context.pop();
 
           // Update the current user
           _currentUser = value.user;
+
+          // Create a profile for the new user
+          Profile profile = Profile(
+            uid: _currentUser!.uid,
+            role: 'user', // Default role
+          );
+
+          _userProfile = profile;
+
+          // create a new profile document in Firestore
+          await FirebaseFirestore.instance
+              .collection('profile')
+              .doc(_currentUser!.uid)
+              .set(profile.toJson());
 
           // Save user data to GetStorage
           storage.write('user', _currentUser?.uid);
@@ -179,7 +215,7 @@ class AuthController extends GetxController {
           showNotificationSnackBar(
             context: context,
             icon: successIcon,
-            message: 'Signed in as\n${value.user!.email}!',
+            message: 'Signed up as\n${value.user!.email}!',
             backgroundColor: successColor,
           );
 
@@ -195,7 +231,15 @@ class AuthController extends GetxController {
       context.pop();
 
       // Handle specific Firebase Authentication errors
-      if (e.code == 'weak-password') {
+      if (e.code == 'network-request-failed') {
+        debugPrint('No internet connection.');
+        showNotificationSnackBar(
+          context: context,
+          icon: dangerIcon,
+          message: 'Check you internet connection and try again.',
+          backgroundColor: dangerColor,
+        );
+      } else if (e.code == 'weak-password') {
         debugPrint('The password provided is too weak.');
         showNotificationSnackBar(
           context: context,
@@ -273,6 +317,32 @@ class AuthController extends GetxController {
           // Update the current user
           _currentUser = value.user;
 
+          // Check if profile exists in Firestore. If not, create a new profile
+          FirebaseFirestore.instance
+              .collection('profile')
+              .doc(_currentUser!.uid)
+              .get()
+              .then((DocumentSnapshot documentSnapshot) {
+            if (documentSnapshot.exists) {
+              _userProfile = Profile.fromJson(documentSnapshot.data() as Map<String, dynamic>);
+              debugPrint('Profile exists');
+            } else {
+              debugPrint('Profile does not exist');
+              Profile profile = Profile(
+                uid: _currentUser!.uid,
+                role: 'user',
+              );
+
+              _userProfile = profile;
+
+              // create a new profile document in Firestore
+              FirebaseFirestore.instance
+                  .collection('profile')
+                  .doc(_currentUser!.uid)
+                  .set(profile.toJson());
+            }
+          });
+
           // Save user data to GetStorage
           storage.write('user', _currentUser?.uid);
 
@@ -347,6 +417,9 @@ class AuthController extends GetxController {
           // Update the current user to null
           _currentUser = null;
 
+          // Update the user profile to null
+          _userProfile = null;
+
           // Remove user data from GetStorage
           storage.remove('user');
 
@@ -375,6 +448,11 @@ class AuthController extends GetxController {
         backgroundColor: dangerColor,
       );
     }
+  }
+
+  // Sign out of Google
+  void googleSignOut(BuildContext context) async {
+    showLoadingDialog(context);
 
     // Try to sign out google user
     try {

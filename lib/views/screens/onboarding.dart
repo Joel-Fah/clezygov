@@ -101,11 +101,12 @@ class _OnboardPageState extends State<OnboardPage> {
                     ),
                     Gap(16.0),
                     PrimaryButton.label(
-                      onPressed: () {
+                      onPressed: () async {
                         if (currentIndex ==
                             onboardingData.indexOf(onboardingData.last)) {
                           // update onboarded value in storage
-                          authController.hasOnboarded = true;
+                          await storage.write('hasOnboarded', true);
+
 
                           // Go to login page using go router
                           context.go(LoginPage.routeName);

@@ -15,6 +15,8 @@ import 'package:clezigov/views/screens/settings/community_activity.dart';
 import 'package:clezigov/views/screens/settings/notifications.dart';
 import 'package:clezigov/views/widgets/home_feeds/procedures/agent_request.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter/foundation.dart';
 
@@ -22,15 +24,19 @@ import '../controllers/auth_controller.dart';
 import '../views/screens/auth/register/user_registration.dart';
 
 final rootNavigatorKey = GlobalKey<NavigatorState>();
-final AuthController authController = AuthController();
+final AuthController authController = Get.find<AuthController>();
+final GetStorage storage = GetStorage();
 
 final GoRouter router = GoRouter(
   // initialLocation: OnboardPage.routeName,
+  // if user is signed in, redirect to home page
+  // else if user is not signed in and has not completed onboarding, redirect to onboarding page
+  // else if user is not signed in and has completed onboarding, redirect to login page
   initialLocation: authController.isUserSignedIn()
       ? HomePage.routeName
-      : authController.hasOnboarded
-        ? LoginPage.routeName
-        : OnboardPage.routeName,
+      : storage.read('hasOnboarded') == true
+          ? LoginPage.routeName
+          : OnboardPage.routeName,
   navigatorKey: rootNavigatorKey,
   routes: [
     GoRoute(

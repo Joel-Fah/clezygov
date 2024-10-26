@@ -17,9 +17,11 @@ class Availability {
   Map<String, dynamic> toJson() {
     return {
       'id': id,
-      'date': date.toIso8601String(),
-      'fromTime': fromTime.toIso8601String(),
-      'toTime': toTime.toIso8601String(),
+      'date': date
+
+      ,
+      'fromTime': fromTime,
+      'toTime': toTime,
       'isAvailable': isAvailable,
     };
   }

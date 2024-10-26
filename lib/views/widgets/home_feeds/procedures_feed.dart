@@ -5,7 +5,6 @@ import 'package:clezigov/models/procedures/category.dart';
 import 'package:clezigov/views/screens/home/procedure_details.dart';
 import 'package:clezigov/views/widgets/home_feeds/procedures/search_procedures_delegate.dart';
 import 'package:clezigov/views/widgets/home_feeds/procedures/recommended.dart';
-import 'package:clezigov/views/widgets/tilt_icon.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:gap/gap.dart';
@@ -15,6 +14,7 @@ import 'package:hugeicons/hugeicons.dart';
 import 'package:like_button/like_button.dart';
 import 'package:share_plus/share_plus.dart';
 
+import '../../../controllers/auth_controller.dart';
 import '../../../models/procedures/procedures.dart';
 import '../../../utils/constants.dart';
 import '../../../utils/utility_functions.dart';
@@ -28,229 +28,137 @@ class ProceduresFeed extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // GetxController
+    final AuthController authController = Get.find<AuthController>();
+
     final TextEditingController searchController = TextEditingController();
     bool isPortraitOrientation =
         MediaQuery.orientationOf(context) == Orientation.portrait;
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text.rich(
-          TextSpan(children: [
-            TextSpan(text: "Hey "),
-            TextSpan(
-              text: "Joël Fah",
-              style: AppTextStyles.h2.copyWith(
-                color: seedColor,
-              ),
-            ),
-            TextSpan(text: ",\nStart the day relaxed"),
-          ]),
-          style: AppTextStyles.h2.copyWith(
-            fontFamily: nohemiFont,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        bottom: PreferredSize(
-          preferredSize: Size.fromHeight(10.0),
-          child: SizedBox(),
-        ),
-        actions: [
-          Container(
-            margin: EdgeInsets.only(right: 10.0),
-            decoration: BoxDecoration(
-              color: seedColorPalette.shade50,
-              shape: BoxShape.circle,
-            ),
-            child: IconButton(
-              tooltip: "Search",
-              onPressed: () {
-                showSearch(
-                  context: context,
-                  delegate: SearchProceduresDelegate(
-                    procedures: procedures,
-                    hintText: "Search for a procedure...",
-                  ),
-                );
-              },
-              splashColor: seedColorPalette.shade100,
-              highlightColor: seedColorPalette.shade100,
-              padding: allPadding * 2,
-              icon: const Icon(
-                HugeIcons.strokeRoundedSearch01,
-                color: seedColor,
-              ),
-            ),
-          )
-        ],
-      ),
-      body: ListView(
-        physics: const BouncingScrollPhysics(),
-        children: [
-          ListHeader(
-            title: "Recommended",
-          ),
-          Animate(
-            effects: [FadeEffect(), MoveEffect()],
-            child: isPortraitOrientation
-                ? Swiper(
-                    layout: SwiperLayout.CUSTOM,
-                    customLayoutOption:
-                        CustomLayoutOption(startIndex: -1, stateCount: 3)
-                          ..addRotate([-45.0 / 180, 0.0, 45.0 / 180])
-                          ..addTranslate([
-                            Offset(-368.0, -40.0),
-                            Offset(0.0, 0.0),
-                            Offset(368.0, -40.0),
-                          ]),
-                    physics: const BouncingScrollPhysics(),
-                    duration: (duration.inMilliseconds * 2).toInt(),
-                    curve: Curves.decelerate,
-                    itemWidth: mediaWidth(context) - 70,
-                    itemHeight: 180,
-                    itemCount: procedures.length,
-                    itemBuilder: (context, index) {
-                      final Procedure procedure = procedures[index];
-                      return RecommendedProcedure(procedureId: procedure.id);
-                    },
-                  )
-                : Swiper(
-                    layout: SwiperLayout.STACK,
-                    physics: const BouncingScrollPhysics(),
-                    duration: (duration.inMilliseconds * 2).toInt(),
-                    curve: Curves.decelerate,
-                    itemWidth: mediaWidth(context) / 1.5,
-                    itemHeight: 180,
-                    itemCount: procedures.length,
-                    itemBuilder: (context, index) {
-                      final Procedure procedure = procedures[index];
-                      return RecommendedProcedure(procedureId: procedure.id);
-                    },
-                  ),
-          ),
-          Gap(16.0),
-          ListHeader(
-            title: "Popular categories",
-          ),
-          Gap(16.0),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0),
-            child: Wrap(
-              spacing: 8.0,
-              runSpacing: 8.0,
-              children: List.generate(
-                categories.sublist(0, 5).length,
-                (index) {
-                  final Category category = categories.sublist(0, 5)[index];
-                  final IconData? categoryIcon = categoryIcons[index][category];
+    return GetBuilder<ProceduresController>(builder: (proceduresController) {
+      final List<Procedure> procedures = proceduresController.allProcedures
+      ..sort((a, b) => b.createdAt.compareTo(a.createdAt));
 
-                  return Container(
-                    padding: allPadding * 2,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: borderRadius * 2.75,
-                      boxShadow: [shadow],
-                    ),
-                    constraints: BoxConstraints(
-                      minWidth: 112.0,
-                    ),
-                    child: Column(
-                      children: [
-                        TiltIcon(
-                          icon: categoryIcon,
-                          iconSize: 24.0,
-                        ),
-                        Gap(8.0),
-                        Text(
-                          category.name,
-                          style: AppTextStyles.body,
-                        )
-                      ],
+      return Scaffold(
+        appBar: AppBar(
+          scrolledUnderElevation: 0.0,
+          title: Text.rich(
+            TextSpan(children: [
+              TextSpan(text: "Hey "),
+              TextSpan(
+                text: authController.user?.displayName ??
+                    extractNameFromEmail(authController.user!.email!),
+                style: AppTextStyles.h2.copyWith(
+                  color: seedColor,
+                ),
+              ),
+              TextSpan(text: ",\nStart the day relaxed"),
+            ]),
+            style: AppTextStyles.h2.copyWith(
+              fontFamily: nohemiFont,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          bottom: PreferredSize(
+            preferredSize: Size.fromHeight(10.0),
+            child: SizedBox(),
+          ),
+          actions: [
+            Container(
+              margin: EdgeInsets.only(right: 10.0),
+              decoration: BoxDecoration(
+                color: seedColorPalette.shade50,
+                shape: BoxShape.circle,
+              ),
+              child: IconButton(
+                tooltip: "Search",
+                onPressed: () {
+                  showSearch(
+                    context: context,
+                    delegate: SearchProceduresDelegate(
+                      procedures: procedures,
+                      hintText: "Search for a procedure...",
                     ),
                   );
                 },
-              )..add(
-                  GestureDetector(
-                    onTap: () {
-                      // Bottom sheet for categories
-                      showModalBottomSheet(
-                        context: context,
-                        isScrollControlled: true,
-                        isDismissible: true,
-                        constraints: BoxConstraints(
-                          maxHeight: mediaHeight(context) / 1.5,
-                          maxWidth: MediaQuery.orientationOf(context) ==
-                                  Orientation.portrait
-                              ? mediaWidth(context)
-                              : mediaWidth(context) / 1.5,
-                        ),
-                        builder: (context) {
-                          return Stack(
-                            children: [
-                              CategoriesList(
-                                  searchController: searchController),
-                              Positioned(
-                                top: -10.0,
-                                right: 10.0,
-                                child: IconButton(
-                                  onPressed: () => context.pop(),
-                                  icon: Icon(HugeIcons.strokeRoundedCancel01),
-                                ),
-                              ),
-                            ],
-                          );
-                        },
-                      );
-                    },
-                    child: Container(
-                      padding: allPadding * 2,
-                      decoration: BoxDecoration(
-                        color: backgroundColor,
-                        borderRadius: borderRadius * 2.75,
-                        boxShadow: [shadow],
-                      ),
-                      constraints: BoxConstraints(
-                        minWidth: 112.0,
-                      ),
-                      child: Column(
-                        children: [
-                          TiltIcon(
-                            icon: HugeIcons.strokeRoundedArrowUpRight02,
-                            iconSize: 24.0,
-                          ),
-                          Gap(8.0),
-                          Text(
-                            "More...",
-                            style: AppTextStyles.body
-                                .copyWith(color: scaffoldBgColor),
-                          )
-                        ],
-                      ),
-                    ),
-                  ),
+                splashColor: seedColorPalette.shade100,
+                highlightColor: seedColorPalette.shade100,
+                padding: allPadding * 2,
+                icon: const Icon(
+                  HugeIcons.strokeRoundedSearch01,
+                  color: seedColor,
                 ),
+              ),
+            )
+          ],
+        ),
+        body: ListView(
+          physics: const BouncingScrollPhysics(),
+          children: [
+            ListHeader(
+              title: "Recommended",
             ),
-          ),
-          Gap(16.0),
-          ListHeader(
-            title: "Latest Updates",
-          ),
-          Gap(16.0),
-          ListView.separated(
-            shrinkWrap: true,
-            physics: const ClampingScrollPhysics(),
-            itemCount: procedures.length,
-            separatorBuilder: (context, index) => Divider(
-              height: 0,
+            Animate(
+              effects: [FadeEffect(), MoveEffect()],
+              child: isPortraitOrientation
+                  ? Swiper(
+                layout: SwiperLayout.CUSTOM,
+                customLayoutOption:
+                CustomLayoutOption(startIndex: -1, stateCount: 3)
+                  ..addRotate([-45.0 / 180, 0.0, 45.0 / 180])
+                  ..addTranslate([
+                    Offset(-368.0, -40.0),
+                    Offset(0.0, 0.0),
+                    Offset(368.0, -40.0),
+                  ]),
+                physics: const BouncingScrollPhysics(),
+                duration: (duration.inMilliseconds * 2).toInt(),
+                curve: Curves.decelerate,
+                itemWidth: mediaWidth(context) - 70,
+                itemHeight: 180,
+                itemCount: procedures.length,
+                itemBuilder: (context, index) {
+                  final Procedure procedure = procedures[index];
+                  return RecommendedProcedure(procedureId: procedure.id);
+                },
+              )
+                  : Swiper(
+                layout: SwiperLayout.STACK,
+                physics: const BouncingScrollPhysics(),
+                duration: (duration.inMilliseconds * 2).toInt(),
+                curve: Curves.decelerate,
+                itemWidth: mediaWidth(context) / 1.5,
+                itemHeight: 180,
+                itemCount: procedures.length,
+                itemBuilder: (context, index) {
+                  final Procedure procedure = procedures[index];
+                  return RecommendedProcedure(procedureId: procedure.id);
+                },
+              ),
             ),
-            itemBuilder: (context, index) {
-              Procedure procedure = procedures[index];
+            Gap(16.0),
+            ListHeader(
+              title: "Latest Updates",
+            ),
+            Gap(16.0),
+            ListView.separated(
+              shrinkWrap: true,
+              physics: const ClampingScrollPhysics(),
+              itemCount: procedures.length,
+              separatorBuilder: (context, index) =>
+                  Divider(
+                    height: 0,
+                  ),
+              itemBuilder: (context, index) {
+                Procedure procedure = procedures[index];
 
-              return ProcedureCard(procedureId: procedure.id);
-            },
-          ),
-        ],
-      ),
-    );
+                return ProcedureCard(procedureId: procedure.id);
+              },
+            ),
+          ],
+        ),
+      );
+    });
   }
 }
 
@@ -262,7 +170,7 @@ class ProcedureCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final Procedure procedure =
-        Get.find<ProceduresController>().getProcedureById(procedureId);
+    Get.find<ProceduresController>().getProcedureById(procedureId);
 
     return InkWell(
       onTap: () {
@@ -312,7 +220,8 @@ class ProcedureCard extends StatelessWidget {
                             Gap(4.0),
                             Expanded(
                               child: Text(
-                                "${addThousandSeparator(procedure.price.toInt().toString())} F",
+                                "${addThousandSeparator(
+                                    procedure.price.toInt().toString())} F",
                                 style: AppTextStyles.small.copyWith(
                                   fontSize: 14.0,
                                   color: disabledColor,
@@ -334,7 +243,8 @@ class ProcedureCard extends StatelessWidget {
                             Gap(4.0),
                             Expanded(
                               child: Text(
-                                "~${convertToReadableTime(procedure.estimatedTimeToComplete)}",
+                                "~${convertToReadableTime(
+                                    procedure.estimatedTimeToComplete)}",
                                 style: AppTextStyles.small.copyWith(
                                   fontSize: 14.0,
                                   color: disabledColor,
@@ -371,46 +281,49 @@ class ProcedureCard extends StatelessWidget {
                   children: [
                     GetBuilder<BookmarksController>(
                         builder: (bookmarksController) {
-                      final int bookmarksCount = bookmarksController.bookmarks
-                          .where((element) => element.id == procedure.id)
-                          .length;
+                          final int bookmarksCount = bookmarksController
+                              .bookmarks
+                              .where((element) => element.id == procedure.id)
+                              .length;
 
-                      final bool isBookmarked =
+                          final bool isBookmarked =
                           bookmarksController.bookmarks.contains(procedure);
 
-                      return LikeButton(
-                        onTap: (isLiked) {
-                          if (isLiked) {
-                            bookmarksController.removeBookmark(procedure);
-                          } else {
-                            bookmarksController.addBookmark(procedure);
-                          }
-                          return Future.value(!isLiked);
-                        },
-                        likeBuilder: (isLiked) {
-                          return Icon(
-                            HugeIcons.strokeRoundedBookmark02,
-                            color: isLiked ? warningColor : darkColor,
-                            size: 16,
-                          );
-                        },
-                        isLiked: isBookmarked,
-                        circleColor: CircleColor(
-                          start: warningColor.withOpacity(0.16),
-                          end: warningColor.withOpacity(0.16),
-                        ),
-                        countBuilder: (count, isLiked, text) {
-                          return Text(
-                            count.toString(),
-                            style: AppTextStyles.body.copyWith(
-                              color: isLiked ? warningColor : darkColor,
+                          return LikeButton(
+                            onTap: (isLiked) {
+                              if (isLiked) {
+                                bookmarksController.removeBookmark(procedure);
+                              } else {
+                                bookmarksController.addBookmark(procedure);
+                              }
+                              return Future.value(!isLiked);
+                            },
+                            likeBuilder: (isLiked) {
+                              return Icon(
+                                HugeIcons.strokeRoundedBookmark02,
+                                color: isLiked ? warningColor : darkColor,
+                                size: 16,
+                              );
+                            },
+                            isLiked: isBookmarked,
+                            circleColor: CircleColor(
+                              start: warningColor.withOpacity(0.16),
+                              end: warningColor.withOpacity(0.16),
                             ),
+                            countBuilder: (count, isLiked, text) {
+                              return Text(
+                                count.toString(),
+                                style: AppTextStyles.body.copyWith(
+                                  color: isLiked ? warningColor : darkColor,
+                                ),
+                              );
+                            },
+                            countPostion: CountPostion.right,
+                            likeCount: bookmarksCount > 0
+                                ? bookmarksCount
+                                : null,
                           );
-                        },
-                        countPostion: CountPostion.right,
-                        likeCount: bookmarksCount > 0 ? bookmarksCount : null,
-                      );
-                    }),
+                        }),
                     IconButton(
                       onPressed: () {
                         Share.share(procedure.title);
@@ -476,14 +389,14 @@ class _CategoriesListState extends State<CategoriesList> {
                 // show suffix button if search field is not empty
                 suffixIcon: widget.searchController.text.isNotEmpty
                     ? IconButton(
-                        icon: Icon(HugeIcons.strokeRoundedCancel01),
-                        onPressed: () {
-                          setState(() {
-                            widget.searchController.clear();
-                            categories = allCategories;
-                          });
-                        },
-                      )
+                  icon: Icon(HugeIcons.strokeRoundedCancel01),
+                  onPressed: () {
+                    setState(() {
+                      widget.searchController.clear();
+                      categories = allCategories;
+                    });
+                  },
+                )
                     : null,
                 fillColor: Colors.white,
                 filled: true,
@@ -586,10 +499,10 @@ class ListHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+      padding: const EdgeInsets.symmetric(horizontal: 12.0),
       child: Text(
         title,
-        style: AppTextStyles.h3,
+        style: AppTextStyles.h3.copyWith(fontWeight: FontWeight.bold),
       ),
     );
   }

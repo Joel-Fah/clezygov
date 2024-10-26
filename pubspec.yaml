@@ -66,6 +66,9 @@ dependencies:
   google_sign_in: ^6.2.1
   cloud_firestore: ^5.4.4
   get_storage: ^2.1.1
+  google_generative_ai: ^0.4.6
+  flutter_dotenv: ^5.2.1
+  flutter_markdown: ^0.7.4+1
 
 dev_dependencies:
   flutter_test:
@@ -125,6 +128,7 @@ flutter:
     - assets/images/
     - assets/fonts/
     - google_fonts/
+    - .env
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

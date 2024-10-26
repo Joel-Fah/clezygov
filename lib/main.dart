@@ -1,5 +1,6 @@
 import 'package:clezigov/controllers/auth_controller.dart';
 import 'package:clezigov/controllers/bookmarks_controller.dart';
+import 'package:clezigov/controllers/clezy_controller.dart';
 import 'package:clezigov/controllers/notifications_controller.dart';
 import 'package:clezigov/controllers/procedures_controller.dart';
 import 'package:clezigov/controllers/profile_page_controller.dart';
@@ -11,7 +12,9 @@ import 'package:clezigov/utils/routes.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
+import 'package:google_generative_ai/google_generative_ai.dart';
 
 import 'controllers/endorsements_controller.dart';
 import 'firebase_options.dart';
@@ -58,6 +61,7 @@ class MyApp extends StatelessWidget {
     Get.put(ProceduresController());
     Get.put(ProfilePageController());
     Get.put(AuthController());
+    Get.put(ClezyController());
 
     return GetMaterialApp.router(
       title: 'CleziGov',

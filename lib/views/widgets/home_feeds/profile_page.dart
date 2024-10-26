@@ -15,8 +15,12 @@ import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hugeicons/hugeicons.dart';
 
+import '../../../controllers/auth_controller.dart';
 import '../../../utils/constants.dart';
 import '../../screens/home/profile_details.dart';
+import '../alert_dialog.dart';
+import '../buttons/primary_button.dart';
+import '../buttons/text_button.dart';
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({
@@ -32,6 +36,8 @@ class ProfilePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final AuthController authController = Get.find<AuthController>();
+
     return OrientationBuilder(builder: (context, orientation) {
       if (orientation == Orientation.landscape) {
         return GetBuilder<ProfilePageController>(builder: (profileController) {
@@ -117,6 +123,7 @@ class _BuildLayoutState extends State<BuildLayout> {
   @override
   Widget build(BuildContext context) {
     final profileController = Get.find<ProfilePageController>();
+    final authController = Get.find<AuthController>();
 
     return Scaffold(
       appBar: AppBar(
@@ -623,7 +630,28 @@ class _BuildLayoutState extends State<BuildLayout> {
                     Material(
                       color: Colors.transparent,
                       child: InkWell(
-                        onTap: () {},
+                        onTap: () {
+                          // Show confirmation dialog
+                          showDefaultDialog(
+                            context: context,
+                            title: 'Sign out',
+                            message: 'You are about to sign out of your account. Are you sure you want to proceed?',
+                            actions: [
+                              PrimaryButton.label(
+                                backgroundColor: dangerColor,
+                                onPressed: () {
+                                  authController.signOut(context);
+                                  authController.googleSignOut(context);
+                                },
+                                label: 'Sign out',
+                              ),
+                              TertiaryButton.label(
+                                onPressed: () => context.pop(),
+                                label: 'Cancel',
+                              ),
+                            ],
+                          );
+                        },
                         borderRadius: borderRadius * 2,
                         highlightColor: dangerColor.withOpacity(0.16),
                         overlayColor: WidgetStateProperty.all(
