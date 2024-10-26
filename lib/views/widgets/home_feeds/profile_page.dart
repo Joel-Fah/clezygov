@@ -642,8 +642,13 @@ class _BuildLayoutState extends State<BuildLayout> {
                               PrimaryButton.label(
                                 backgroundColor: dangerColor,
                                 onPressed: () {
-                                  authController.signOut(context);
-                                  authController.googleSignOut(context);
+                                  // Sign out Google user
+                                  if (authController.user?.providerData[0].providerId == 'google.com') {
+                                    authController.googleSignOut(context);
+                                  } else {
+                                    // Sign out Firebase user
+                                    authController.signOut(context);
+                                  }
                                 },
                                 label: 'Sign out',
                               ),
