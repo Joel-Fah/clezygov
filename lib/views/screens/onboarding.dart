@@ -22,6 +22,10 @@ class _OnboardPageState extends State<OnboardPage> {
 
   @override
   Widget build(BuildContext context) {
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.go('/home');
+    });
     return Scaffold(
       extendBodyBehindAppBar: true,
       body: PageView.builder(

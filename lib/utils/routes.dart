@@ -14,6 +14,7 @@ import 'package:clezigov/views/screens/settings/appearance.dart';
 import 'package:clezigov/views/screens/settings/community_activity.dart';
 import 'package:clezigov/views/screens/settings/notifications.dart';
 import 'package:clezigov/views/widgets/home_feeds/procedures/agent_request.dart';
+import 'package:clezigov/views/widgets/home_feeds/procedures/todo_mode.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
@@ -154,6 +155,17 @@ final GoRouter router = GoRouter(
       path: AgentPage.routeName,
       name: removeBeginningSlash(AgentPage.routeName),
       builder: (context, state) => const AgentPage(),
+    ),
+    GoRoute(
+      parentNavigatorKey: rootNavigatorKey,
+      path: "${TodoModePage.routeName}/:id",
+      name: removeBeginningSlash(TodoModePage.routeName),
+      builder: (context, state) {
+        return TodoModePage(
+          key: state.pageKey,
+          procedureId: state.pathParameters['id']!,
+        );
+      },
     ),
   ],
 );

@@ -148,7 +148,7 @@ class LoginPage extends StatelessWidget {
                                       iconWidget: SvgPicture.asset(userAvatars),
                                       title: "Happy to have you among us!",
                                       message:
-                                          "You are officially a member of of the CleziGov community. Make sure to explore all the features and information you get here.",
+                                          "You are officially a member of the CleziGov community. Make sure to explore all the features and information you get here.",
                                       actions: [
                                         PrimaryButton.label(
                                           onPressed: () {},
