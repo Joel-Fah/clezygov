@@ -26,11 +26,26 @@ class TodoModePage extends StatefulWidget {
 
 class _TodoModePageState extends State<TodoModePage> {
   final TaskController controller = Get.put(TaskController());
-  var total;
+  int _checkedCount = 0;
+
+  int total = 6;
+  var percentageOfTasks;
 
   var current;
+  String upNextTask =
+      "Tortor arcu libero massa dui vel duis. In justo integer morbi a dapibus euismod venenatis. Urna malesuada amet quis sem. Tellus.";
 
   bool isComplete = true;
+
+  void _onCheckboxChanged(bool value) {
+    setState(() {
+      if (value) {
+        _checkedCount++;
+      } else {
+        _checkedCount--;
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -61,14 +76,10 @@ class _TodoModePageState extends State<TodoModePage> {
             children: [
               Gap(8),
               Center(
-                child: GetBuilder<TaskController>(
-                  builder: (TaskController controller) {
-                    return Text(
-                      "${controller.completionPercentage.toStringAsFixed(2)}",
-                      style: AppTextStyles.h1.copyWith(fontSize: 44),
-                      textAlign: TextAlign.center,
-                    );
-                  },
+                child: Text(
+                  "${((_checkedCount / total) * 100).ceil()} %",
+                  style: AppTextStyles.h1.copyWith(fontSize: 44),
+                  textAlign: TextAlign.center,
                 ),
               ),
               Gap(18),
@@ -88,7 +99,14 @@ class _TodoModePageState extends State<TodoModePage> {
                     width: double.infinity,
                     height: 8,
                     decoration: BoxDecoration(
-                        color: index == 0 ? successColor : disabledColor,
+                        color: ((_checkedCount / total) * 100 >= 33.33 &&
+                                    (index == 0)) ||
+                                ((_checkedCount / total) * 100 >= 66.66 &&
+                                    (index == 1)) ||
+                                ((_checkedCount / total) * 100 >= 97.33 &&
+                                    (index == 2))
+                            ? successColor
+                            : disabledColor,
                         borderRadius: borderRadius * 2),
                   ),
                 ),
@@ -101,11 +119,12 @@ class _TodoModePageState extends State<TodoModePage> {
                 decoration: BoxDecoration(
                     borderRadius: BorderRadius.all(Radius.circular(20)),
                     border: Border.all(
-                        color: Colors.lightGreen,
+                        color: (_checkedCount / total) * 100 >= 98
+                            ? successColor
+                            : disabledColor,
                         width: 2.0,
                         style: BorderStyle.solid)),
-                child: Text(
-                    "Tortor arcu libero massa dui vel duis. In justo integer morbi a dapibus euismod venenatis. Urna malesuada amet quis sem. Tellus."),
+                child: Text(upNextTask),
               ),
               Gap(8),
               Row(
@@ -115,7 +134,9 @@ class _TodoModePageState extends State<TodoModePage> {
                     onTap: () {},
                     child: Icon(
                       HugeIcons.strokeRoundedCheckmarkCircle02,
-                      color: successColor,
+                      color: (_checkedCount / total) * 100 >= 98
+                          ? successColor
+                          : disabledColor,
                       size: 32.0,
                     ),
                   ),
@@ -148,10 +169,11 @@ class _TodoModePageState extends State<TodoModePage> {
                     itemBuilder: (context, index) {
                       return Column(
                         children: [
-                          Obx(() => TaskItem(
-                                isChecked: controller.checkedTasks[index],
-                                onChanged: () => {controller.toggleTask(index)},
-                              )),
+                          TaskItem(
+                            onChanged: (bool) {
+                              _onCheckboxChanged(bool);
+                            },
+                          ),
                           Gap(8),
                           Divider(
                             height: 1,

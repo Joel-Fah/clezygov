@@ -1,11 +1,13 @@
 import 'package:clezigov/controllers/reactions_controller.dart';
 import 'package:clezigov/utils/constants.dart';
 import 'package:clezigov/views/widgets/buttons/primary_button.dart';
+import 'package:clezigov/views/widgets/notification_snackbar.dart';
 import 'package:clezigov/views/widgets/tilt_icon.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hugeicons/hugeicons.dart';
 
 import '../../../../models/procedures/procedures.dart';
@@ -32,7 +34,7 @@ void showRatingModal(BuildContext context, Procedure procedure) {
           padding: EdgeInsets.symmetric(horizontal: 9.0),
           child: Container(
             width: mediaWidth(context) / 1.5,
-            height: mediaWidth(context) ,
+            height: mediaWidth(context),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.center,
@@ -106,9 +108,15 @@ void showRatingModal(BuildContext context, Procedure procedure) {
                       Gap(16.0),
                       PrimaryButton.label(
                         onPressed: () {
-                         if(context.mounted){
-                           Navigator.of(context).pop();
-                         }
+                          if (context.mounted) {
+                            showNotificationSnackBar(
+                              context: context,
+                              icon: successIcon,
+                              message: 'Thanks for reviewing the ToDo mode!',
+                              backgroundColor: successColor,
+                            );
+                            context.go('/');
+                          }
                         },
                         label: "Submit",
                       ),
