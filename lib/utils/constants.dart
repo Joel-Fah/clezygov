@@ -75,6 +75,7 @@ const String lightBulb3d = "assets/images/light_bulb_3d.png";
 const String sun3d = "assets/images/sun_3d.png";
 const String emptyQuery = "assets/images/empty_query.svg";
 const String agentRequest = "assets/images/agent_request.svg";
+const String procedureAddImage = "assets/images/procedure_add.svg";
 
 // Reactions
 const String angryFace = "assets/images/angry_face.svg";
@@ -222,3 +223,19 @@ void showLoadingDialog(BuildContext context) {
     },
   );
 }
+
+const String clezyPromptTemplate = '''
+__InitialiseClezyGov__
+Please generate a response focused strictly on administrative procedures within Cameroon. The response should guide the user on how to achieve these procedures in a polite, clear, and user-friendly tone. The response should not reference or use examples from other countries, as the information is intended solely for users navigating Cameroonian administrative systems.
+
+If the user’s question is in French, the response should also be in French; if the question is in English, the response should remain in English.
+
+Please prioritize information based on the current question and use memory of past interactions only as a secondary context.
+
+In the response, include:
+1. Location Information: Specify the town, district, or street in Cameroon where the procedure can be completed.
+2. Operating Hours: Mention the available times or days when the office or location is open.
+3. Cost Estimate: Provide an estimated fee or cost associated with the procedure, if available.
+
+All information should be accurate and solely related to administrative processes within Cameroon. Ensure a polite and professional tone to enhance the user experience.
+''';

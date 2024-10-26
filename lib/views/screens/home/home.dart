@@ -1,8 +1,9 @@
-import 'dart:math';
 import 'dart:ui';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:clezigov/controllers/clezy_controller.dart';
 import 'package:clezigov/utils/routes.dart';
+import 'package:clezigov/utils/utility_functions.dart';
 import 'package:clezigov/views/widgets/alert_dialog.dart';
 import 'package:clezigov/views/widgets/notification_snackbar.dart';
 import 'package:clezigov/views/widgets/buttons/primary_button.dart';
@@ -10,20 +11,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_generative_ai/google_generative_ai.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:palette_generator/palette_generator.dart';
 import 'package:pie_menu/pie_menu.dart';
 
-import '../../../models/profile.dart';
+import '../../../controllers/auth_controller.dart';
 import '../../../utils/constants.dart';
 import '../../widgets/home_feeds/clezi_bot.dart';
 import '../../widgets/home_feeds/community_feed.dart';
+import '../../widgets/home_feeds/procedures/procedures_add.dart';
 import '../../widgets/home_feeds/procedures_feed.dart';
 import '../../widgets/home_feeds/profile_page.dart';
 
@@ -46,6 +46,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   late Animation<double> _borderRadiusAnimation;
 
   final ClezyController clezyController = Get.find<ClezyController>();
+  final AuthController authController = Get.find<AuthController>();
+
   final TextEditingController cleziController = TextEditingController();
   bool isCleziMessageFilled = false;
   final FocusNode cleziFocusNode = FocusNode();
@@ -64,8 +66,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
-    
-    _updatePrimaryColor(image: image);
+
+    _updatePrimaryColor(image: authController.user?.photoURL ?? image);
 
     tabController = TabController(
       length: tabNames.length,
@@ -101,9 +103,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       });
     });
 
-    String text = '__InitialiseClezyGov__ Hello, your name is Clezy and you help users with administrative procedures in Cameroon. Present yourself in ten words following these instructions.';
-    clezyController.getTextFieldValue(text);
-    clezyController.generateContent(text);
+    clezyController.getTextFieldValue(clezyPromptTemplate);
+    clezyController.generateContent(clezyPromptTemplate);
   }
 
   @override
@@ -157,10 +158,29 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
             width: 1.5,
           ),
         ),
-        child: CircleAvatar(
-          radius: 16.0,
-          backgroundColor: seedColorPalette.shade700,
-          backgroundImage: AssetImage(pfp),
+        child: CachedNetworkImage(
+          imageUrl: authController.user?.photoURL ?? pfp,
+          imageBuilder: (context, imageProvider) {
+            return CircleAvatar(
+              radius: 16.0,
+              backgroundColor: seedColorPalette.shade700,
+              backgroundImage: authController.user?.photoURL == null ? AssetImage(pfp) : NetworkImage(authController.user!.photoURL!),
+            );
+          },
+          placeholder: (context, url) {
+            return CircleAvatar(
+              radius: 16.0,
+              backgroundColor: seedColorPalette.shade700,
+              backgroundImage: AssetImage(pfp),
+            );
+          },
+          errorWidget: (context, url, error) {
+            return CircleAvatar(
+              radius: 16.0,
+              backgroundColor: seedColorPalette.shade700,
+              backgroundImage: AssetImage(pfp),
+            );
+          },
         ),
       )
     ];
@@ -261,9 +281,10 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                           context: context,
                           icon: HugeIcons.strokeRoundedChatBot,
                           title: "Before you proceed...",
-                          message: "Clezy is a bot that can help you with any "
-                              "questions you have. Please do not share any personal "
-                              "information with Clezy.",
+                          message:
+                              "Clezy provides guidance on administrative procedures in Cameroon. "
+                                  "While we strive for accuracy, please verify details with official sources, "
+                                  "as information may change. Clezy is not liable for actions taken based on this advice.",
                           actions: [
                             PrimaryButton.label(
                               onPressed: () {
@@ -272,23 +293,30 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                               label: "Agree and continue",
                             ),
                             // Do not show this dialog again
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                GetBuilder<ClezyController>(
-                                    builder: (clezyController) {
-                                  return Checkbox(
-                                    value: clezyController.isClezyDialogShown,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: borderRadius / 1.25,
-                                    ),
-                                    activeColor: seedColor,
-                                    onChanged: (value) =>
-                                        clezyController.toggleClezyDialog(),
-                                  );
-                                }),
-                                Text("Do not show this dialog again"),
-                              ],
+                            GestureDetector(
+                              onTap: () => clezyController.toggleClezyDialog(),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  GetBuilder<ClezyController>(
+                                      builder: (clezyController) {
+                                    return Checkbox(
+                                      value: clezyController.isClezyDialogShown,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: borderRadius / 1.25,
+                                      ),
+                                      activeColor: seedColor,
+                                      onChanged: (value) =>
+                                          clezyController.toggleClezyDialog(),
+                                    );
+                                  }),
+                                  Text(
+                                    "Do not show this dialog again",
+                                    style: AppTextStyles.small
+                                        .copyWith(color: disabledColor),
+                                  ),
+                                ],
+                              ),
                             )
                           ],
                         );
@@ -362,8 +390,10 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                       },
                       onSubmitted: (value) {
                         if (isCleziMessageFilled) {
-                          clezyController.getTextFieldValue(cleziController.text.trim());
-                          clezyController.generateContent(cleziController.text.trim());
+                          clezyController
+                              .getTextFieldValue(cleziController.text.trim());
+                          clezyController
+                              .generateContent(cleziController.text.trim());
 
                           // Clear controller
                           cleziController.clear();
@@ -519,12 +549,12 @@ class TabBuilder extends StatelessWidget {
       }
 
       // Procedures tab
-      if (index == 0 && authController.userProfile?.role == 'admin') {
+      if (index == 0 && authController.userProfile?.role.toLowerCase() == "admin") {
         return PieMenu(
           onPressed: () {
             // show flutter toast
             Fluttertoast.showToast(
-              msg: "Long press for options",
+              msg: "Long press for options ${authController.userProfile?.role.toLowerCase()}",
               toastLength: Toast.LENGTH_SHORT,
               gravity: ToastGravity.BOTTOM,
               timeInSecForIosWeb: 1,
@@ -541,7 +571,7 @@ class TabBuilder extends StatelessWidget {
           actions: [
             PieAction(
               tooltip: Text('Add procedure'),
-              onSelect: () {},
+              onSelect: () => context.pushNamed(removeBeginningSlash(ProcedureAddPage.routeName)),
               child: Icon(HugeIcons.strokeRoundedPlusSign),
             ),
           ],

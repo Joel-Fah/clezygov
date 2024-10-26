@@ -38,7 +38,7 @@ class CleziBot extends StatelessWidget {
             TextSpan(children: [
               TextSpan(text: "Hi I'm "),
               TextSpan(
-                text: "Clezi",
+                text: "Clezy",
                 style: AppTextStyles.h2.copyWith(
                   color: seedColor,
                 ),
@@ -168,11 +168,71 @@ class CleziBot extends StatelessWidget {
                           Expanded(child: SquigglePattern()),
                         ],
                       ),
+                      if (clezyController.isLoadingContent)
+                      Animate(
+                        effects: const [FadeEffect(), MoveEffect()],
+                        child: Animate(
+                          onPlay: (controller) => controller.repeat(
+                            reverse: true,
+                          ),
+                          effects: [ShimmerEffect(
+                            delay: duration * 5,
+                            duration: duration * 8,
+                          )],
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                CircleAvatar(
+                                  radius: 16,
+                                  backgroundColor: seedColorPalette.shade200,
+                                ),
+                                Gap(8.0),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: List.generate(5, (index) {
+                                      return Padding(
+                                        padding: const EdgeInsets.symmetric(vertical: 2.0),
+                                        child: Container(
+                                          // random width between 50% and 100% based on index
+                                          width: ((){
+                                            switch (index) {
+                                              case 0:
+                                                return mediaWidth(context) * 0.8;
+                                              case 1:
+                                                return mediaWidth(context) * 0.7;
+                                              case 2:
+                                                return mediaWidth(context) * 0.6;
+                                              case 3:
+                                                return mediaWidth(context) * 0.8;
+                                              case 4:
+                                                return mediaWidth(context) * 0.4;
+                                              default:
+                                                return mediaWidth(context);
+                                            }
+                                          }()),
+                                          height: 10.0,
+                                          decoration: BoxDecoration(
+                                            borderRadius: borderRadius * 5,
+                                            color: seedColorPalette.shade50,
+                                          ),
+                                        ),
+                                      );
+                                    },),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
                       Gap(8.0),
                       ...prompts.map((prompt) {
                         return Container(
                           padding: EdgeInsets.symmetric(vertical: 16.0),
-                          // add color to the last user prompt
                           decoration: BoxDecoration(
                             color: prompt == prompts.first
                                 ? seedColorPalette.shade50.withOpacity(0.5)
@@ -187,7 +247,20 @@ class CleziBot extends StatelessWidget {
                                 child: Row(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    CachedNetworkImage(
+                                    authController.user!.photoURL == null
+                                    ? Container(
+                                      padding: allPadding / 2,
+                                      alignment: Alignment.center,
+                                      decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        color: seedColorPalette.shade50,
+                                      ),
+                                      child: Icon(
+                                        HugeIcons.strokeRoundedUser,
+                                        size: 14.0,
+                                      ),
+                                    )
+                                    : CachedNetworkImage(
                                       imageUrl: authController.user!.photoURL!,
                                       width: 28.0,
                                       height: 28.0,

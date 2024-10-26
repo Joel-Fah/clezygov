@@ -14,6 +14,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:google_generative_ai/google_generative_ai.dart';
 
 import 'controllers/endorsements_controller.dart';
@@ -26,6 +27,9 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+
+  // Initialize GetStorage
+  await GetStorage.init();
 
   // Set color of status bar to scaffold bg
   SystemChrome.setSystemUIOverlayStyle(

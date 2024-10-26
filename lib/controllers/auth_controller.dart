@@ -1,3 +1,4 @@
+import 'package:clezigov/views/screens/auth/login/login.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -45,6 +46,20 @@ class AuthController extends GetxController {
     if (isUserSignedIn()) {
       // Get the current user
       _currentUser = FirebaseAuth.instance.currentUser;
+
+      // Get the user profile
+      FirebaseFirestore.instance
+          .collection('profile')
+          .doc(_currentUser!.uid)
+          .get()
+          .then((DocumentSnapshot documentSnapshot) {
+        if (documentSnapshot.exists) {
+          debugPrint('Profile exists');
+          _userProfile = Profile.fromJson(documentSnapshot.data() as Map<String, dynamic>);
+        } else {
+          debugPrint('Profile does not exist');
+        }
+      });
     }
   }
 
@@ -408,6 +423,8 @@ class AuthController extends GetxController {
     showLoadingDialog(context);
 
     try {
+      final hasOnboarded = storage.read('hasOnboarded');
+
       // Sign out from Firebase
       await FirebaseAuth.instance.signOut().then(
             (value) {
@@ -431,8 +448,12 @@ class AuthController extends GetxController {
             backgroundColor: successColor,
           );
 
-          // Navigate to the login page
-          context.go(OnboardPage.routeName);
+          // Navigate to the login page if onboarded
+          if (hasOnboarded) {
+            context.go(LoginPage.routeName);
+          } else {
+            context.go(OnboardPage.routeName);
+          }
         },
       );
     } catch (e) {
@@ -456,8 +477,32 @@ class AuthController extends GetxController {
 
     // Try to sign out google user
     try {
-      await GoogleSignIn().signOut();
+      final hasOnboarded = storage.read('hasOnboarded');
+
+      await GoogleSignIn().signOut().then((value) {
+        // Dismiss loading dialog
+        context.pop();
+
+        // Update the current user to null
+        _currentUser = null;
+
+        // Show a success snackbar
+        showNotificationSnackBar(
+          context: context,
+          icon: successIcon,
+          message: 'You have successfully signed out.',
+          backgroundColor: successColor,
+        );
+
+        // Navigate to the login page if onboarded
+        if (hasOnboarded) {
+          context.go(LoginPage.routeName);
+        } else {
+          context.go(OnboardPage.routeName);
+        }
+      });
     } catch (e) {
+      context.pop();
       debugPrint('Error signing out Google user: $e');
     }
   }

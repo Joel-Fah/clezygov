@@ -1,3 +1,4 @@
+import 'package:clezigov/utils/constants.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
@@ -9,13 +10,15 @@ class ClezyController extends GetxController {
   String _textFieldText = '';
   Future<GenerateContentResponse>? _generatedContentFuture;
   final List<Prompt> _prompts = [];
-  int _lastUserPromptIndex = -1; // Track the index of the last user prompt
+  int _lastUserPromptIndex = -1;
+  bool _isLoadingContent = false;
 
   bool get isClezyDialogShown => _isClezyDialogShown.value;
   String get textFieldText => _textFieldText;
   Future<GenerateContentResponse>? get generatedContentFuture => _generatedContentFuture;
   List<Prompt> get prompts => _prompts;
   int get lastUserPromptIndex => _lastUserPromptIndex;
+  bool get isLoadingContent => _isLoadingContent;
 
   final GetStorage storage = GetStorage();
 
@@ -39,6 +42,7 @@ class ClezyController extends GetxController {
 
   // Function to get the value of the text field and return response from model
   Future<void> generateContent(String text) async {
+    _isLoadingContent = true;
     // Load .env
     await dotenv.load(fileName: ".env");
 
@@ -55,7 +59,9 @@ class ClezyController extends GetxController {
       ),
     );
 
-    final content = [Content.text(text)];
+    // Get the last 3 prompts
+    final lastPrompts = _prompts.reversed.take(3).map((prompt) => prompt.text).toList().reversed.join('\n\n');
+    final content = [Content.text('$clezyPromptTemplate\n\n$lastPrompts\n\n$text')];
     final response = await model.generateContent(content);
 
     // Add the prompt and generated content to the list
@@ -68,6 +74,7 @@ class ClezyController extends GetxController {
     _lastUserPromptIndex = _prompts.length - 1; // Update the last user prompt index
 
     _generatedContentFuture = Future.value(response);
+    _isLoadingContent = false;
     update();
   }
 }
